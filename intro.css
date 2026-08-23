@@ -567,6 +567,13 @@ body.invite-locked {
   transform: translate(62%, -50%) scale(0.94);
 }
 
+/* Máy tính: cột 480px nhưng khung cao 100vh — seal ở 50% bị tụt xuống */
+@media (min-width: 481px) {
+  .cover-seal {
+    top: 41%;
+  }
+}
+
 /* Kim tuyến vàng quanh thiệp — hạt rõ, nhấp nháy */
 .cover-glitter {
   position: absolute;
