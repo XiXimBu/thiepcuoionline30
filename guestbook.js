@@ -44,10 +44,12 @@
   }
 
   function setupGuestbook() {
+    if (window.__guestbookReady) return;
     if (typeof firebase === "undefined") {
       console.warn("Firebase SDK chưa tải.");
       return;
     }
+    window.__guestbookReady = true;
 
     const fab = document.getElementById("book-fab");
     const heartFab = document.getElementById("heart-fab");
@@ -231,7 +233,7 @@
       const dt = Math.min(40, ts - lastTs);
       lastTs = ts;
 
-      if (!reduceMotion && items.length > 1) {
+      if (!reduceMotion && items.length > VISIBLE_COUNT) {
         // Ease slightly when user expanded a long message (pause drift a bit)
         const expanded = track.querySelector(".live-chip.is-expanded");
         const speed = expanded ? SCROLL_SPEED * 0.25 : SCROLL_SPEED;
@@ -265,11 +267,11 @@
 
       if (empty) empty.hidden = true;
 
-      // Keep a looping track, but viewport only shows ~3 comments
+      // Only clone for a seamless loop when there are more unique notes
+      // than the 3-line viewport. With 1–3 notes, show each once.
       let seed = nextItems.slice();
-      const minLoop = Math.max(VISIBLE_COUNT + 1, 4);
-      while (seed.length > 0 && seed.length < minLoop) {
-        seed = seed.concat(nextItems);
+      if (nextItems.length > VISIBLE_COUNT) {
+        seed = seed.concat(nextItems.slice(0, VISIBLE_COUNT));
       }
       track.insertAdjacentHTML("beforeend", seed.map(chipHtml).join(""));
       bindChipMore(track);
