@@ -123,8 +123,11 @@ function setupInviteType() {
   document.documentElement.dataset.inviteType = type || "default";
   applyInvitePageMeta();
 
-  if (type === "nhagai30") {
+  if (isBrideInviteType(type)) {
     applyBrideSideLayout();
+  }
+
+  if (type === "nhagai30") {
     const timeEl = document.querySelector("[data-party-time]");
     if (timeEl) timeEl.textContent = "11:00";
     return;
@@ -132,7 +135,6 @@ function setupInviteType() {
 
   if (type !== "nhagai29") return;
 
-  applyBrideSideLayout();
   const timeEl = document.querySelector("[data-party-time]");
   if (timeEl) timeEl.textContent = "17:00";
   const weekEl = document.querySelector("[data-party-weekday]");
@@ -172,6 +174,34 @@ function applyBrideSideLayout() {
     if (groomName && brideName && and) {
       couple.insertBefore(brideName, groomName);
       couple.insertBefore(and, groomName);
+    }
+  }
+
+  const photoA = document.querySelector(".couple-polaroid-a .portrait-img");
+  const photoB = document.querySelector(".couple-polaroid-b .portrait-img");
+  if (photoA && photoB) {
+    const src = photoA.getAttribute("src");
+    const alt = photoA.getAttribute("alt");
+    photoA.setAttribute("src", photoB.getAttribute("src") || "");
+    photoA.setAttribute("alt", photoB.getAttribute("alt") || "");
+    photoB.setAttribute("src", src || "");
+    photoB.setAttribute("alt", alt || "");
+  }
+
+  const tagBride = document.querySelector(".couple-tag-bride");
+  const tagGroom = document.querySelector(".couple-tag-groom");
+  if (tagBride && tagGroom) {
+    const brideLabel = tagBride.querySelector(".couple-tag-label");
+    const brideName = tagBride.querySelector(".couple-tag-name");
+    const groomLabel = tagGroom.querySelector(".couple-tag-label");
+    const groomName = tagGroom.querySelector(".couple-tag-name");
+    if (brideLabel && brideName && groomLabel && groomName) {
+      const label = brideLabel.textContent;
+      const name = brideName.textContent;
+      brideLabel.textContent = groomLabel.textContent;
+      brideName.textContent = groomName.textContent;
+      groomLabel.textContent = label;
+      groomName.textContent = name;
     }
   }
 

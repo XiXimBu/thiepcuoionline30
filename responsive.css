@@ -226,13 +226,13 @@
 
 @media (max-width: 258px) {
   #couple-portraits .couple-tag-groom {
-    left: 22px;
+    left: 10px;
   }
 }
 
 @media (max-width: 223px) {
   #couple-portraits .couple-tag-groom {
-    left: 12px;
+    left: 6px;
   }
 }
 
