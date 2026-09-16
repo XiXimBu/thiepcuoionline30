@@ -500,7 +500,7 @@ html {
             width: 100%;
             aspect-ratio: 4 / 3;
             object-fit: cover;
-            object-position: center 20%;
+            object-position: 40% 29%;
             background: #f4f1ea;
         }
         .invite-photo-date {
@@ -849,6 +849,9 @@ html {
             display: block;
             width: 100%;
             height: auto;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            object-position: center 46%;
             background: none;
             opacity: 0;
             transform: scale(0.78);
@@ -1373,7 +1376,7 @@ html {
             width: 100%;
             height: min(48vh, 380px);
             object-fit: cover;
-            object-position: center bottom;
+            object-position: center 12%;
             pointer-events: none;
             user-select: none;
             -webkit-user-drag: none;
@@ -1810,7 +1813,7 @@ html {
   aspect-ratio: 4 / 3;
   height: auto;
   object-fit: cover;
-  object-position: center 22%;
+  object-position: center 48%;
   border: 2px solid rgba(255, 255, 255, 0.92);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
 }
@@ -2618,13 +2621,16 @@ body.invite-locked .live-book {
 .couple-polaroid img {
   position: absolute;
   left: 6%;
-  top: 6%;
+  top: 9%;
   width: 88%;
   height: 80%;
   object-fit: cover;
-  object-position: center center;
+  object-position: center 18%;
   display: block;
   border-radius: 1px;
+}
+.couple-polaroid-b img {
+  object-position: center 6%;
 }
 .couple-polaroid-a {
   top: 0;
@@ -3108,8 +3114,7 @@ body.invite-locked .live-book {
   color: #8A7355;
 }
 
-/* ===== LOVE — full ngang, chữ khối rộng fill ô, sát nhau =====
-   Shell ~400px → mỗi ô ~199×170. Mask SVG chiếm ~96% ô; gap 2px. */
+/* ===== LOVE — full ngang, chu sat, o deu nhau ===== */
 .love-album {
   position: relative;
   z-index: 1;
@@ -3122,7 +3127,7 @@ body.invite-locked .live-book {
   background: transparent;
 }
 .love-grid {
-  --love-gap: 2px;
+  --love-gap: 1px;
   width: 100%;
   max-width: none;
   display: grid;
@@ -3139,10 +3144,10 @@ body.invite-locked .live-book {
   transform: scale(0.94);
   transition: opacity 0.8s ease, transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
   background-image: var(--love-photo);
-  background-size: calc(200% + var(--love-gap)) calc(200% + var(--love-gap));
+  background-size: 240% auto;
   background-repeat: no-repeat;
-  -webkit-mask-size: 96% 96%;
-  mask-size: 96% 96%;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
@@ -3154,24 +3159,24 @@ body.invite-locked .live-book {
 .love-album.is-in .love-e { opacity: 1; transform: none; transition-delay: 0.56s; }
 
 .love-l {
-  background-position: left top;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23fff' d='M6 4h32v60H94v32H6z'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23fff' d='M6 4h32v60H94v32H6z'/%3E%3C/svg%3E");
+  background-position: 20% 23%;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23fff' d='M8 2h34v58H98v38H8z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23fff' d='M8 2h34v58H98v38H8z'/%3E%3C/svg%3E");
 }
 .love-o {
-  background-position: right top;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle fill='%23fff' cx='50' cy='50' r='48'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle fill='%23fff' cx='50' cy='50' r='48'/%3E%3C/svg%3E");
+  background-position: 64% 23%;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle fill='%23fff' cx='47' cy='50' r='50'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle fill='%23fff' cx='47' cy='50' r='50'/%3E%3C/svg%3E");
 }
 .love-v {
-  background-position: left bottom;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23fff' d='M4 4h34l12 68L62 4h34L58 96H42z'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23fff' d='M4 4h34l12 68L62 4h34L58 96H42z'/%3E%3C/svg%3E");
+  background-position: 18% 64%;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23fff' d='M10 2h36l12 70L70 2h30L62 98H46z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23fff' d='M10 2h36l12 70L70 2h30L62 98H46z'/%3E%3C/svg%3E");
 }
 .love-e {
-  background-position: right bottom;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23fff' d='M6 4h88v30H38v8h50v24H38v8h56v26H6z'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23fff' d='M6 4h88v30H38v8h50v24H38v8h56v26H6z'/%3E%3C/svg%3E");
+  background-position: 64% 68%;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23fff' d='M0 2h94v30H32v8h54v24H32v8h62v26H0z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23fff' d='M0 2h94v30H32v8h54v24H32v8h62v26H0z'/%3E%3C/svg%3E");
 }
 /* Glyph/disc cũ không còn dùng làm mask — ẩn nội dung chữ */
 .love-glyph,

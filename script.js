@@ -846,8 +846,8 @@ function setupHeroSlider() {
   if (!viewport || !track) return;
 
   const albumSrcs = [
-    "https://res.cloudinary.com/dwryahwiu/image/upload/v1786086703/1786060246585_3741576002241547934_3741576002241547934_ed1a88f9d6c9facffd0590dcd330dabb_c1a2g3.jpg",
-    "https://res.cloudinary.com/dwryahwiu/image/upload/v1786086703/1786060246595_3741576002241547934_3741576002241547934_d54a69ab00a30d787e63cc8145f6ccb3_rnst5o.jpg",
+    "https://res.cloudinary.com/dwryahwiu/image/upload/v1789552400/photo1_lmlhry.jpg",
+    "https://res.cloudinary.com/dwryahwiu/image/upload/v1789552402/photo2_rzt8zn.jpg",
   ];
 
   if (albumSrcs.length) {
