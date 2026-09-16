@@ -1829,12 +1829,15 @@ html {
 }
 .count-bg {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: auto;
   z-index: 0;
   width: 100%;
-  height: 100%;
+  height: 118%;
   object-fit: cover;
-  object-position: center 34%;
+  object-position: center top;
 }
 .count-shade {
   position: absolute;
@@ -2662,17 +2665,16 @@ body.invite-locked .live-book {
 .couple-tag-bride {
   top: 6%;
   right: 0;
+  width: 46%;
+  max-width: 46%;
   z-index: 9;
 }
 .couple-tag-groom {
-  left: 14px;
+  left: 0;
   bottom: 12%;
-  width: fit-content;
-  align-items: center;
-  text-align: center;
-}
-.couple-tag-groom .couple-tag-name {
-  font-size: clamp(23px, 6.2vw, 30px);
+  width: 46%;
+  max-width: 46%;
+  padding: 0 8px;
 }
 .couple-tag-label {
   font-family: "Playfair Display", "Source Serif 4", serif;
@@ -2689,6 +2691,7 @@ body.invite-locked .live-book {
   font-size: clamp(26px, 7vw, 34px);
   line-height: 1.1;
   color: #9E1A32;
+  white-space: nowrap;
 }
 .couple-flower {
   position: absolute;

@@ -26,40 +26,10 @@
     font-weight: 700;
     font-size: clamp(26px, 7.2vw, 34px);
   }
-}
-
-@media (max-width: 767px) {
-  #rsvp.invite-paper-block,
-  #rsvp .invite-paper-layer,
-  #rsvp .invite-paper-content,
-  #rsvp .rsvp-panel,
-  #rsvp .rsvp-form,
-  #rsvp .rsvp-field {
-    overflow: visible;
-  }
-  .rsvp-select-wrap {
-    position: relative;
-    width: 100%;
-    z-index: 2;
-  }
-  .rsvp-select {
-    width: 100%;
-    max-width: 100%;
-    min-height: 44px;
-    font-size: 16px;
-    line-height: 1.35;
-    padding: 0.7rem 2.5rem 0.7rem 0.85rem;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  .rsvp-input {
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 360px) {
+  /* Phone layout: 350–480px (iPhone SE 375, Android 360/390).
+     Do not keep these only under 328/360 — real phones never hit those. */
   .paper-section .paper-inner.invite-card {
-    padding: 1.35rem 0.62rem 1.2rem;
+    padding: 1.35rem 0.72rem 1.2rem;
   }
   .invite-parents {
     gap: 0.75rem 0.5rem;
@@ -79,7 +49,7 @@
     text-align: center;
     overflow-wrap: normal;
     word-break: normal;
-    font-size: clamp(10px, 3.6vw, 13px);
+    font-size: clamp(10px, 3.4vw, 13px);
     line-height: 1.4;
     min-height: 0;
   }
@@ -88,7 +58,7 @@
     text-align: center;
     overflow-wrap: anywhere;
     word-break: break-word;
-    font-size: clamp(10px, 3.4vw, 12px);
+    font-size: clamp(10px, 3.2vw, 12px);
     line-height: 1.4;
     min-height: 0;
   }
@@ -129,6 +99,35 @@
   }
   .invite-paper-block .paper-branch {
     top: -78px;
+  }
+}
+
+@media (max-width: 767px) {
+  #rsvp.invite-paper-block,
+  #rsvp .invite-paper-layer,
+  #rsvp .invite-paper-content,
+  #rsvp .rsvp-panel,
+  #rsvp .rsvp-form,
+  #rsvp .rsvp-field {
+    overflow: visible;
+  }
+  .rsvp-select-wrap {
+    position: relative;
+    width: 100%;
+    z-index: 2;
+  }
+  .rsvp-select {
+    width: 100%;
+    max-width: 100%;
+    min-height: 44px;
+    font-size: 16px;
+    line-height: 1.35;
+    padding: 0.7rem 2.5rem 0.7rem 0.85rem;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .rsvp-input {
+    font-size: 16px;
   }
 }
 
@@ -226,13 +225,15 @@
 
 @media (max-width: 258px) {
   #couple-portraits .couple-tag-groom {
-    left: 10px;
+    left: 0;
+    padding: 0 6px;
   }
 }
 
 @media (max-width: 223px) {
   #couple-portraits .couple-tag-groom {
-    left: 6px;
+    left: 0;
+    padding: 0 4px;
   }
 }
 
