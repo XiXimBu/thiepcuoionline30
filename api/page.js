@@ -60,7 +60,7 @@ function inviteShareDescription(bride) {
 }
 
 function isBrideInviteType(type) {
-  return String(type || "").indexOf("nhagai") === 0;
+  return type === "nhagai29" || type === "nhagai30";
 }
 
 function escapeAttr(text) {

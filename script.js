@@ -51,7 +51,7 @@ function getInviteType() {
 }
 
 function isBrideInviteType(type) {
-  return String(type || "").indexOf("nhagai") === 0;
+  return type === "nhagai29" || type === "nhagai30";
 }
 
 function decodeInviteParam(value) {
@@ -125,6 +125,12 @@ function setupInviteType() {
 
   if (isBrideInviteType(type)) {
     applyBrideSideLayout();
+  }
+
+  if (type === "1730") {
+    const timeEl = document.querySelector("[data-party-time]");
+    if (timeEl) timeEl.textContent = "17:30";
+    return;
   }
 
   if (type === "nhagai30") {
@@ -963,7 +969,9 @@ function setupCountdown() {
       ? new Date("2026-09-30T11:00:00+07:00").getTime()
       : type === "nhagai29"
         ? new Date("2026-09-29T17:00:00+07:00").getTime()
-        : new Date("2026-09-30T17:00:00+07:00").getTime();
+        : type === "1730"
+          ? new Date("2026-09-30T17:30:00+07:00").getTime()
+          : new Date("2026-09-30T17:00:00+07:00").getTime();
 
   function pad(n) {
     return String(Math.max(0, n)).padStart(2, "0");

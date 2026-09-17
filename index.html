@@ -37,7 +37,7 @@
       .replace(/\?/g, "&");
     var params = new URLSearchParams(raw);
     var type = (params.get("type") || "").trim().toLowerCase().replace(/[^a-z0-9].*$/, "");
-    var wedding = type.indexOf("nhagai") === 0
+    var wedding = (type === "nhagai29" || type === "nhagai30")
       ? "HOÀNG HẠNH & TRINH GIANG WEDDING"
       : "TRINH GIANG & HOÀNG HẠNH WEDDING";
     var name = (params.get("name") || "").replace(/\+/g, " ");
@@ -805,7 +805,7 @@ Gửi xác nhận
 <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-database-compat.js"></script>
 <script src="guestbook.js?v=20260823once"></script>
-<script src="script.js?v=20260917intro05"></script>
+<script src="script.js?v=20260917t1730b"></script>
 <div aria-hidden="true" data-snapdom-sandbox="true" id="snapdom-sandbox" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div>
 </body></html>
 
