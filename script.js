@@ -1653,7 +1653,7 @@ function runCoverIntro() {
         el.textContent = el.getAttribute("data-type") || "";
       });
       if (theImg) theImg.classList.add("is-shown");
-      await wait(2400);
+      await wait(1900);
     } else {
       await wait(600);
       for (const el of lines) {
@@ -1667,7 +1667,7 @@ function runCoverIntro() {
           await wait(700);
         }
       }
-      await wait(3000);
+      await wait(1500);
     }
 
     intro.classList.remove("is-active");
