@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const SHARE_IMAGE =
-  "https://res.cloudinary.com/dwryahwiu/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto:faces/v1789552912/album5_wzdwtw.jpg";
+  "https://res.cloudinary.com/dwryahwiu/image/upload/v1789668022/TTT01236_i55z9l.jpg";
 
 function parseInviteSearch(rawUrl) {
   const text = String(rawUrl || "");
