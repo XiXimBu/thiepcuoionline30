@@ -6,22 +6,27 @@
 <!-- SHARE_META_START -->
 <title>TRINH GIANG &amp; HOÀNG HẠNH WEDDING</title>
 <meta name="title" content="TRINH GIANG &amp; HOÀNG HẠNH WEDDING"/>
+<meta name="description" content="TRINH GIANG &amp; HOÀNG HẠNH WEDDING"/>
 <meta itemprop="name" content="TRINH GIANG &amp; HOÀNG HẠNH WEDDING"/>
-<meta itemprop="image" content="https://res.cloudinary.com/dai4kn53o/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto/v1786528268/background2_hyeraf.jpg"/>
+<meta itemprop="description" content="TRINH GIANG &amp; HOÀNG HẠNH WEDDING"/>
+<meta itemprop="image" content="https://res.cloudinary.com/dwryahwiu/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto:faces/v1789552912/album5_wzdwtw.jpg"/>
 <meta property="og:type" content="website"/>
-<meta property="og:site_name" content="TRINH GIANG &amp; HOÀNG HẠNH WEDDING"/>
+<meta property="og:site_name" content="Giang &amp; Hạnh"/>
 <meta property="og:title" content="TRINH GIANG &amp; HOÀNG HẠNH WEDDING"/>
+<meta property="og:description" content="TRINH GIANG &amp; HOÀNG HẠNH WEDDING"/>
 <meta property="og:url" content="https://thiepcuoigianghanh.vercel.app/"/>
 <meta property="og:locale" content="vi_VN"/>
-<meta property="og:image" content="https://res.cloudinary.com/dai4kn53o/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto/v1786528268/background2_hyeraf.jpg"/>
-<meta property="og:image:secure_url" content="https://res.cloudinary.com/dai4kn53o/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto/v1786528268/background2_hyeraf.jpg"/>
+<meta property="og:image" content="https://res.cloudinary.com/dwryahwiu/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto:faces/v1789552912/album5_wzdwtw.jpg"/>
+<meta property="og:image:url" content="https://res.cloudinary.com/dwryahwiu/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto:faces/v1789552912/album5_wzdwtw.jpg"/>
+<meta property="og:image:secure_url" content="https://res.cloudinary.com/dwryahwiu/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto:faces/v1789552912/album5_wzdwtw.jpg"/>
 <meta property="og:image:type" content="image/jpeg"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
 <meta property="og:image:alt" content="TRINH GIANG &amp; HOÀNG HẠNH WEDDING"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="TRINH GIANG &amp; HOÀNG HẠNH WEDDING"/>
-<meta name="twitter:image" content="https://res.cloudinary.com/dai4kn53o/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto/v1786528268/background2_hyeraf.jpg"/>
+<meta name="twitter:description" content="TRINH GIANG &amp; HOÀNG HẠNH WEDDING"/>
+<meta name="twitter:image" content="https://res.cloudinary.com/dwryahwiu/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto:faces/v1789552912/album5_wzdwtw.jpg"/>
 <link rel="canonical" href="https://thiepcuoigianghanh.vercel.app/"/>
 <!-- SHARE_META_END -->
 <link rel="icon" href="https://res.cloudinary.com/dai4kn53o/image/upload/f_png,w_64,h_64,c_fit/v1786528271/sealbadge_c0puue.png"/>
@@ -43,15 +48,29 @@
     var name = (params.get("name") || "").replace(/\+/g, " ");
     try { name = decodeURIComponent(name); } catch (e) {}
     name = name.replace(/~/g, " ").replace(/\s+/g, " ").trim();
+    var shareTitle = name ? ("Kính mời " + name) : wedding;
+    var shareDesc = name ? ("Kính mời " + name + " tới dự lễ thành hôn") : wedding;
     var title = name ? ("Kính mời " + name + " | " + wedding) : wedding;
+    var shareImage = "https://res.cloudinary.com/dwryahwiu/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto:faces/v1789552912/album5_wzdwtw.jpg";
+    var shareUrl = (location.origin || "https://thiepcuoigianghanh.vercel.app") + "/" + (location.search || "");
     document.title = title;
     var pairs = [
-      ['meta[name="title"]', title],
-      ['meta[itemprop="name"]', title],
-      ['meta[property="og:title"]', title],
-      ['meta[property="og:site_name"]', wedding],
-      ['meta[property="og:image:alt"]', wedding],
-      ['meta[name="twitter:title"]', title]
+      ['meta[name="title"]', shareTitle],
+      ['meta[name="description"]', shareDesc],
+      ['meta[itemprop="name"]', shareTitle],
+      ['meta[itemprop="description"]', shareDesc],
+      ['meta[itemprop="image"]', shareImage],
+      ['meta[property="og:title"]', shareTitle],
+      ['meta[property="og:description"]', shareDesc],
+      ['meta[property="og:site_name"]', "Giang & Hạnh"],
+      ['meta[property="og:url"]', shareUrl],
+      ['meta[property="og:image"]', shareImage],
+      ['meta[property="og:image:url"]', shareImage],
+      ['meta[property="og:image:secure_url"]', shareImage],
+      ['meta[property="og:image:alt"]', shareTitle],
+      ['meta[name="twitter:title"]', shareTitle],
+      ['meta[name="twitter:description"]', shareDesc],
+      ['meta[name="twitter:image"]', shareImage]
     ];
     for (var i = 0; i < pairs.length; i++) {
       var nodes = document.querySelectorAll(pairs[i][0]);

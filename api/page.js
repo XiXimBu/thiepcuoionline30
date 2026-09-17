@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const SHARE_IMAGE =
-  "https://res.cloudinary.com/dai4kn53o/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto/v1786528268/background2_hyeraf.jpg";
+  "https://res.cloudinary.com/dwryahwiu/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto:faces/v1789552912/album5_wzdwtw.jpg";
 
 function parseInviteSearch(rawUrl) {
   const text = String(rawUrl || "");
@@ -15,8 +15,41 @@ function parseInviteSearch(rawUrl) {
   return new URLSearchParams(normalized);
 }
 
-function parseInviteType(rawUrl) {
-  return (parseInviteSearch(rawUrl).get("type") || "")
+function headerQuery(req) {
+  const invoke = req.headers && req.headers["x-invoke-query"];
+  if (invoke) {
+    try {
+      const decoded = decodeURIComponent(String(invoke));
+      const parsed = JSON.parse(decoded);
+      if (parsed && typeof parsed === "object") return parsed;
+    } catch {
+      /* fall through */
+    }
+  }
+  const uri =
+    (req.headers &&
+      (req.headers["x-forwarded-uri"] ||
+        req.headers["x-invoke-path"] ||
+        req.headers["x-vercel-original-path"])) ||
+    "";
+  if (String(uri).includes("?")) {
+    return Object.fromEntries(parseInviteSearch(uri));
+  }
+  return {};
+}
+
+function queryValue(req, key) {
+  const sources = [req.query || {}, headerQuery(req)];
+  for (let i = 0; i < sources.length; i += 1) {
+    let value = sources[i][key];
+    if (Array.isArray(value)) value = value[0];
+    if (value != null && String(value).trim()) return String(value);
+  }
+  return parseInviteSearch(req.url).get(key) || "";
+}
+
+function parseInviteType(req) {
+  return (queryValue(req, "type") || "")
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9].*$/, "");
@@ -33,8 +66,8 @@ function decodeInviteParam(value) {
   return text.trim();
 }
 
-function guestInviteName(rawUrl) {
-  return decodeInviteParam(parseInviteSearch(rawUrl).get("name"))
+function guestInviteName(req) {
+  return decodeInviteParam(queryValue(req, "name"))
     .replace(/~/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -55,8 +88,9 @@ function inviteShareTitle(bride, guestName) {
   return guestName ? `Kính mời ${guestName}` : coupleWeddingTitle(bride);
 }
 
-function inviteShareDescription(bride) {
-  return coupleWeddingTitle(bride);
+function inviteShareDescription(bride, guestName) {
+  const wedding = coupleWeddingTitle(bride);
+  return guestName ? `Kính mời ${guestName} tới dự lễ thành hôn` : wedding;
 }
 
 function isBrideInviteType(type) {
@@ -68,6 +102,19 @@ function escapeAttr(text) {
     .replace(/&/g, "&amp;")
     .replace(/"/g, "&quot;")
     .replace(/</g, "&lt;");
+}
+
+function requestSearch(req) {
+  const url = String(req.url || "");
+  if (url.indexOf("?") >= 0) return url.slice(url.indexOf("?"));
+  const q = Object.assign({}, headerQuery(req), req.query || {});
+  const params = new URLSearchParams();
+  Object.keys(q).forEach((key) => {
+    const value = Array.isArray(q[key]) ? q[key][0] : q[key];
+    if (value != null && String(value) !== "") params.set(key, String(value));
+  });
+  const search = params.toString();
+  return search ? `?${search}` : "";
 }
 
 function shareMeta({ title, shareTitle, description, siteName, url, image }) {
@@ -96,7 +143,7 @@ function shareMeta({ title, shareTitle, description, siteName, url, image }) {
 <meta property="og:image:type" content="image/jpeg"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
-<meta property="og:image:alt" content="${d}"/>
+<meta property="og:image:alt" content="${st}"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="${st}"/>
 <meta name="twitter:description" content="${d}"/>
@@ -108,24 +155,20 @@ function shareMeta({ title, shareTitle, description, siteName, url, image }) {
 module.exports = (req, res) => {
   const htmlPath = path.join(process.cwd(), "index.html");
   let html = fs.readFileSync(htmlPath, "utf8");
-  const type = parseInviteType(req.url);
+  const type = parseInviteType(req);
   const bride = isBrideInviteType(type);
-  const guestName = guestInviteName(req.url);
-  const wedding = coupleWeddingTitle(bride);
+  const guestName = guestInviteName(req);
   const title = invitePageTitle(bride, guestName);
   const shareTitle = inviteShareTitle(bride, guestName);
-  const description = inviteShareDescription(bride);
+  const description = inviteShareDescription(bride, guestName);
 
-  const proto = req.headers["x-forwarded-proto"] || "https";
   const host = String(
     req.headers["x-forwarded-host"] || req.headers.host || "thiepcuoigianghanh.vercel.app"
   )
     .split(",")[0]
     .trim();
-  const origin = `${proto}://${host}`;
-  const raw = String(req.url || "/");
-  const qIndex = raw.indexOf("?");
-  const search = qIndex >= 0 ? raw.slice(qIndex) : "";
+  const origin = `https://${host}`;
+  const search = requestSearch(req);
   const url = `${origin}/${search}`;
 
   html = html.replace(

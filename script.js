@@ -96,19 +96,28 @@ function applyInvitePageMeta() {
   const shareTitle = getInviteShareTitle();
   const origin = window.location.origin || "https://thiepcuoigianghanh.vercel.app";
   const url = `${origin}/${window.location.search || ""}`;
+  const shareImage =
+    "https://res.cloudinary.com/dwryahwiu/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto:faces/v1789552912/album5_wzdwtw.jpg";
 
   document.title = title;
+  const name = getGuestInviteName();
+  const shareDesc = name ? `Kính mời ${name} tới dự lễ thành hôn` : wedding;
   const pairs = [
     ['meta[name="title"]', shareTitle],
-    ['meta[name="description"]', wedding],
+    ['meta[name="description"]', shareDesc],
     ['meta[itemprop="name"]', shareTitle],
-    ['meta[itemprop="description"]', wedding],
+    ['meta[itemprop="description"]', shareDesc],
+    ['meta[itemprop="image"]', shareImage],
     ['meta[property="og:title"]', shareTitle],
-    ['meta[property="og:description"]', wedding],
+    ['meta[property="og:description"]', shareDesc],
     ['meta[property="og:site_name"]', "Giang & Hạnh"],
-    ['meta[property="og:image:alt"]', wedding],
+    ['meta[property="og:image"]', shareImage],
+    ['meta[property="og:image:url"]', shareImage],
+    ['meta[property="og:image:secure_url"]', shareImage],
+    ['meta[property="og:image:alt"]', shareTitle],
     ['meta[name="twitter:title"]', shareTitle],
-    ['meta[name="twitter:description"]', wedding],
+    ['meta[name="twitter:description"]', shareDesc],
+    ['meta[name="twitter:image"]', shareImage],
     ['meta[property="og:url"]', url],
   ];
   pairs.forEach(([sel, val]) => {
