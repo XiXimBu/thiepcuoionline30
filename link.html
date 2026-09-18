@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex, nofollow"/>
+<title>Tạo link thiệp cưới</title>
+<style>
+  :root {
+    --ink: #4a1c24;
+    --red: #9e1a32;
+    --line: #e7d5c4;
+    --paper: #fffaf4;
+    --bg: #f4ebe2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1.25rem 1rem 2.5rem;
+  }
+  h1 {
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+    color: var(--red);
+  }
+  .hint {
+    margin: 0 0 1.1rem;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    opacity: 0.85;
+  }
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 0.95rem 0.95rem 1rem;
+    margin-bottom: 0.85rem;
+  }
+  .card h2 {
+    margin: 0 0 0.15rem;
+    font-size: 1.02rem;
+  }
+  .card .when {
+    margin: 0 0 0.75rem;
+    font-size: 0.86rem;
+    opacity: 0.75;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 0.55rem;
+  }
+  label {
+    display: block;
+    font-size: 0.78rem;
+    margin-bottom: 0.28rem;
+    font-weight: 600;
+  }
+  input {
+    width: 100%;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid #d8c4b4;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--ink);
+    background: #fff;
+  }
+  .link-box {
+    display: flex;
+    gap: 0.45rem;
+    margin-top: 0.7rem;
+    align-items: stretch;
+  }
+  .link-box input {
+    font-size: 0.82rem;
+    background: #fff;
+  }
+  button {
+    flex: 0 0 auto;
+    border: 0;
+    border-radius: 8px;
+    padding: 0 0.9rem;
+    background: var(--red);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    min-width: 4.6rem;
+  }
+  button.copied {
+    background: #2f7d4a;
+  }
+  @media (max-width: 520px) {
+    .row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tạo link thiệp cưới</h1>
+  <p class="hint">Nhập mối quan hệ và tên khách. Link hiện ngay bên dưới, bấm Copy rồi gửi Zalo / Messenger.</p>
+
+  <datalist id="relations">
+    <option value="Bạn"></option>
+    <option value="Anh"></option>
+    <option value="Chị"></option>
+    <option value="Em"></option>
+    <option value="Chú"></option>
+    <option value="Cô"></option>
+    <option value="Bác"></option>
+    <option value="Cậu"></option>
+    <option value="Dì"></option>
+    <option value="Mợ"></option>
+    <option value="Ông"></option>
+    <option value="Bà"></option>
+  </datalist>
+</main>
+<script>
+  const BASE = "https://thiepcuoigianghanh.vercel.app/";
+  const INVITES = [
+    { type: "", title: "Nhà trai", when: "17:00 · Thứ Tư 30/09" },
+    { type: "1730", title: "Nhà trai", when: "17:30 · Thứ Tư 30/09" },
+    { type: "nhagai29", title: "Nhà gái", when: "17:00 · Thứ Ba 29/09" },
+    { type: "nhagai30", title: "Nhà gái", when: "11:00 · Thứ Tư 30/09" }
+  ];
+
+  function guestName(relation, name) {
+    return [relation, name].map(function (part) {
+      return String(part || "").replace(/\s+/g, " ").trim();
+    }).filter(Boolean).join(" ");
+  }
+
+  function makeLink(type, fullName) {
+    const parts = [];
+    if (type) parts.push("type=" + encodeURIComponent(type));
+    if (fullName) parts.push("name=" + encodeURIComponent(fullName));
+    return BASE + (parts.length ? "?" + parts.join("&") : "");
+  }
+
+  function copyText(text, btn) {
+    function ok() {
+      btn.textContent = "Đã copy";
+      btn.classList.add("copied");
+      setTimeout(function () {
+        btn.textContent = "Copy";
+        btn.classList.remove("copied");
+      }, 1400);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(ok).catch(function () {
+        fallbackCopy(text, btn, ok);
+      });
+      return;
+    }
+    fallbackCopy(text, btn, ok);
+  }
+
+  function fallbackCopy(text, btn, ok) {
+    const temp = document.createElement("textarea");
+    temp.value = text;
+    document.body.appendChild(temp);
+    temp.select();
+    try {
+      document.execCommand("copy");
+      ok();
+    } catch (e) {}
+    document.body.removeChild(temp);
+  }
+
+  const main = document.querySelector("main");
+  INVITES.forEach(function (invite, index) {
+    const card = document.createElement("section");
+    card.className = "card";
+    card.innerHTML =
+      "<h2>" + invite.title + "</h2>" +
+      "<p class=\"when\">" + invite.when + "</p>" +
+      "<div class=\"row\">" +
+        "<div><label for=\"rel-" + index + "\">Mối quan hệ</label>" +
+        "<input id=\"rel-" + index + "\" list=\"relations\" placeholder=\"Bạn, Chú, Cô...\" autocomplete=\"off\"/></div>" +
+        "<div><label for=\"name-" + index + "\">Tên</label>" +
+        "<input id=\"name-" + index + "\" placeholder=\"Nguyễn Văn A\" autocomplete=\"name\"/></div>" +
+      "</div>" +
+      "<div class=\"link-box\">" +
+        "<input id=\"link-" + index + "\" readonly value=\"" + makeLink(invite.type, "") + "\"/>" +
+        "<button type=\"button\" id=\"copy-" + index + "\">Copy</button>" +
+      "</div>";
+    main.appendChild(card);
+
+    const rel = card.querySelector("#rel-" + index);
+    const name = card.querySelector("#name-" + index);
+    const link = card.querySelector("#link-" + index);
+    const copyBtn = card.querySelector("#copy-" + index);
+
+    function refresh() {
+      link.value = makeLink(invite.type, guestName(rel.value, name.value));
+    }
+    rel.addEventListener("input", refresh);
+    name.addEventListener("input", refresh);
+    copyBtn.addEventListener("click", function () {
+      copyText(link.value, copyBtn);
+    });
+    link.addEventListener("focus", function () { link.select(); });
+  });
+</script>
+</body>
+</html>

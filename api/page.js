@@ -104,6 +104,31 @@ function escapeAttr(text) {
     .replace(/</g, "&lt;");
 }
 
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function fillInviteLeadHtml(html, guestName) {
+  const guest = escapeHtml(guestName || "quý khách");
+  return html.replace(
+    /(<p class="invite-lead\b[^>]*>)([\s\S]*?)(<\/p>)/,
+    (full, open, inner, close) => {
+      if (/data-invite-guest/.test(inner)) {
+        inner = inner.replace(
+          /(<span\b[^>]*data-invite-guest[^>]*>)[\s\S]*?(<\/span>)/,
+          `$1${guest}$2`
+        );
+      } else if (guestName) {
+        inner = inner.replace(/quý khách/, guest);
+      }
+      return open + inner + close;
+    }
+  );
+}
+
 function requestSearch(req) {
   const url = String(req.url || "");
   if (url.indexOf("?") >= 0) return url.slice(url.indexOf("?"));
@@ -182,6 +207,8 @@ module.exports = (req, res) => {
       image: SHARE_IMAGE,
     })
   );
+
+  html = fillInviteLeadHtml(html, guestName);
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");

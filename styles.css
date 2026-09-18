@@ -443,6 +443,12 @@ html {
         .invite-lead-line {
             white-space: nowrap;
         }
+        .invite-lead [data-invite-guest] {
+            font: inherit;
+            color: inherit;
+            letter-spacing: inherit;
+            font-weight: inherit;
+        }
         .invite-couple {
             display: flex;
             flex-direction: column;

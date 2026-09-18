@@ -127,10 +127,31 @@ function applyInvitePageMeta() {
   if (canon) canon.setAttribute("href", url);
 }
 
+function fillInviteLeadGuestName() {
+  const name = getGuestInviteName();
+  const el = document.querySelector("[data-invite-guest]");
+  if (el) {
+    el.textContent = name || "quý khách";
+    return;
+  }
+  const lead = document.querySelector(".invite-lead");
+  if (!lead || !name) return;
+  const walk = document.createTreeWalker(lead, NodeFilter.SHOW_TEXT);
+  let node = walk.nextNode();
+  while (node) {
+    if (node.nodeValue && node.nodeValue.indexOf("quý khách") !== -1) {
+      node.nodeValue = node.nodeValue.replace("quý khách", name);
+      break;
+    }
+    node = walk.nextNode();
+  }
+}
+
 function setupInviteType() {
   const type = getInviteType();
   document.documentElement.dataset.inviteType = type || "default";
   applyInvitePageMeta();
+  fillInviteLeadGuestName();
 
   if (isBrideInviteType(type)) {
     applyBrideSideLayout();

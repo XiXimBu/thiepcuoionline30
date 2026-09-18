@@ -76,10 +76,29 @@
       var nodes = document.querySelectorAll(pairs[i][0]);
       for (var j = 0; j < nodes.length; j++) nodes[j].setAttribute("content", pairs[i][1]);
     }
+    function fillLead() {
+      var guest = document.querySelector("[data-invite-guest]");
+      if (guest) {
+        guest.textContent = name || "quý khách";
+        return;
+      }
+      var lead = document.querySelector(".invite-lead");
+      if (!lead || !name) return;
+      var walk = document.createTreeWalker(lead, NodeFilter.SHOW_TEXT, null);
+      var node;
+      while ((node = walk.nextNode())) {
+        if (node.nodeValue && node.nodeValue.indexOf("quý khách") !== -1) {
+          node.nodeValue = node.nodeValue.replace("quý khách", name);
+          break;
+        }
+      }
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fillLead);
+    else fillLead();
   } catch (e) {}
 })();
 </script>
-<link rel="stylesheet" href="styles.css?v=20260917camon40"/>
+<link rel="stylesheet" href="styles.css?v=20260918guest"/>
 <link rel="stylesheet" href="responsive.css?v=20260916phone350"/>
 <link rel="stylesheet" href="intro.css?v=20260916intro"/>
 <link rel="stylesheet" href="animation.css?v=20260813w480"/>
@@ -402,7 +421,7 @@
 </div>
 </div>
 
-<p class="invite-lead wi-reveal wi-from-top" style="--wi-delay:0.45s"><span class="invite-lead-line">Trân trọng kính mời</span><br/>quý khách tới dự lễ thành hôn</p>
+<p class="invite-lead wi-reveal wi-from-top" style="--wi-delay:0.45s"><span class="invite-lead-line">Trân trọng kính mời</span><br/><span data-invite-guest>quý khách</span> tới dự lễ thành hôn</p>
 
 <div class="invite-couple">
 <p class="invite-couple-name wi-reveal wi-from-left" data-person="groom" style="--wi-delay:0.6s">Đài Trinh Giang</p>
@@ -824,7 +843,7 @@ Gửi xác nhận
 <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-database-compat.js"></script>
 <script src="guestbook.js?v=20260823once"></script>
-<script src="script.js?v=20260917t1730b"></script>
+<script src="script.js?v=20260918guest"></script>
 <div aria-hidden="true" data-snapdom-sandbox="true" id="snapdom-sandbox" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div>
 </body></html>
 
