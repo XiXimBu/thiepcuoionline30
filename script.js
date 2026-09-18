@@ -96,8 +96,7 @@ function applyInvitePageMeta() {
   const shareTitle = getInviteShareTitle();
   const origin = window.location.origin || "https://thiepcuoigianghanh.vercel.app";
   const url = `${origin}/${window.location.search || ""}`;
-  const shareImage =
-    "https://res.cloudinary.com/dwryahwiu/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto:faces/v1789552912/album5_wzdwtw.jpg";
+  const shareImage = `${origin}/og.jpg?v=20260918m`;
 
   document.title = title;
   const name = getGuestInviteName();
