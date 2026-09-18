@@ -30,8 +30,8 @@
       "dest": "/$1"
     },
     {
-      "src": "/tao-link(?:\\.html)?/?",
-      "dest": "/tao-link.html"
+      "src": "/(?:link|tao-link)(?:\\.html)?/?",
+      "dest": "/link.html"
     },
     {
       "src": "/.*",
