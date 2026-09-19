@@ -1,30 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
-const SHARE_IMAGE_PATH = "/og.jpg?v=20260918m";
-
-function isShareBot(req) {
-  const ua = String(
-    (req.headers && (req.headers["user-agent"] || req.headers["User-Agent"])) || ""
-  ).toLowerCase();
-  return (
-    ua.includes("facebookexternalhit") ||
-    ua.includes("facebot") ||
-    ua.includes("meta-externalagent") ||
-    ua.includes("meta-externalfetcher") ||
-    ua.includes("twitterbot") ||
-    ua.includes("whatsapp") ||
-    ua.includes("zalo") ||
-    ua.includes("telegrambot") ||
-    ua.includes("slackbot") ||
-    ua.includes("viber") ||
-    ua.includes("linkedinbot") ||
-    ua.includes("pinterest") ||
-    ua.includes("discordbot") ||
-    ua.includes("skypeuripreview") ||
-    ua.includes("line/")
-  );
-}
+const SHARE_IMAGE =
+  "https://res.cloudinary.com/dwryahwiu/image/upload/v1789668022/TTT01236_i55z9l.jpg";
 
 function parseInviteSearch(rawUrl) {
   const text = String(rawUrl || "");
@@ -175,7 +153,6 @@ function shareMeta({ title, shareTitle, description, siteName, url, image }) {
 <title>${t}</title>
 <meta name="title" content="${st}"/>
 <meta name="description" content="${d}"/>
-<meta name="thumbnail" content="${i}"/>
 <meta itemprop="name" content="${st}"/>
 <meta itemprop="description" content="${d}"/>
 <meta itemprop="image" content="${i}"/>
@@ -196,31 +173,13 @@ function shareMeta({ title, shareTitle, description, siteName, url, image }) {
 <meta name="twitter:title" content="${st}"/>
 <meta name="twitter:description" content="${d}"/>
 <meta name="twitter:image" content="${i}"/>
-<link rel="image_src" href="${i}"/>
 <link rel="canonical" href="${u}"/>
 <!-- SHARE_META_END -->`;
 }
 
-function crawlerHtml({ title, shareTitle, description, siteName, url, image }) {
-  const t = escapeHtml(title);
-  const st = escapeHtml(shareTitle);
-  const d = escapeHtml(description);
-  return `<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-${shareMeta({ title, shareTitle, description, siteName, url, image })}
-</head>
-<body>
-<h1>${st}</h1>
-<p>${d}</p>
-<img src="${escapeAttr(image)}" alt="${escapeAttr(shareTitle)}" width="1200" height="630"/>
-</body>
-</html>`;
-}
-
 module.exports = (req, res) => {
+  const htmlPath = path.join(process.cwd(), "index.html");
+  let html = fs.readFileSync(htmlPath, "utf8");
   const type = parseInviteType(req);
   const bride = isBrideInviteType(type);
   const guestName = guestInviteName(req);
@@ -236,40 +195,23 @@ module.exports = (req, res) => {
   const origin = `https://${host}`;
   const search = requestSearch(req);
   const url = `${origin}/${search}`;
-  const image = `${origin}${SHARE_IMAGE_PATH}`;
-  const payload = {
-    title,
-    shareTitle,
-    description,
-    siteName: "Giang & Hạnh",
-    url,
-    image,
-  };
 
-  const sendHtml = (body) => {
-    const buf = Buffer.from(body, "utf8");
-    res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
-    res.setHeader("Vary", "User-Agent");
-    res.setHeader("Content-Length", String(buf.length));
-    if (String(req.method || "GET").toUpperCase() === "HEAD") {
-      res.status(200).end();
-      return;
-    }
-    res.status(200).end(buf);
-  };
-
-  if (isShareBot(req)) {
-    sendHtml(crawlerHtml(payload));
-    return;
-  }
-
-  const htmlPath = path.join(process.cwd(), "index.html");
-  let html = fs.readFileSync(htmlPath, "utf8");
   html = html.replace(
     /<!-- SHARE_META_START -->[\s\S]*?<!-- SHARE_META_END -->/,
-    shareMeta(payload)
+    shareMeta({
+      title,
+      shareTitle,
+      description,
+      siteName: "Giang & Hạnh",
+      url,
+      image: SHARE_IMAGE,
+    })
   );
+
   html = fillInviteLeadHtml(html, guestName);
-  sendHtml(html);
+
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+  res.setHeader("Accept-Ranges", "none");
+  res.status(200).send(html);
 };

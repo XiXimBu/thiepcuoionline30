@@ -30,10 +30,6 @@
       "dest": "/$1"
     },
     {
-      "src": "/og\\.jpg",
-      "dest": "/og.jpg"
-    },
-    {
       "src": "/(?:link|tao-link)(?:\\.html)?/?",
       "dest": "/link.html"
     },

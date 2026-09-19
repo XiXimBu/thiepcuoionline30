@@ -96,7 +96,8 @@ function applyInvitePageMeta() {
   const shareTitle = getInviteShareTitle();
   const origin = window.location.origin || "https://thiepcuoigianghanh.vercel.app";
   const url = `${origin}/${window.location.search || ""}`;
-  const shareImage = `${origin}/og.jpg?v=20260918m`;
+  const shareImage =
+    "https://res.cloudinary.com/dwryahwiu/image/upload/f_jpg,q_auto:good,c_fill,w_1200,h_630,g_auto:faces/v1789552912/album5_wzdwtw.jpg";
 
   document.title = title;
   const name = getGuestInviteName();
@@ -1560,43 +1561,6 @@ function setupInviteEnvelope() {
     }
   }
 
-  function autoSwipeDownToInvite() {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const go = () => {
-      const target =
-        document.getElementById("wedding-info-section") ||
-        document.querySelector(".invite-card");
-      if (!target) return;
-
-      const from = window.scrollY || document.documentElement.scrollTop || 0;
-      const to = Math.max(0, target.getBoundingClientRect().top + from - 10);
-      const dist = to - from;
-      if (dist < 24) return;
-
-      const ms = Math.min(2200, Math.max(1200, dist * 0.8));
-      const startAt = performance.now();
-
-      function easeOutCubic(t) {
-        return 1 - Math.pow(1 - t, 3);
-      }
-
-      function frame(now) {
-        const p = Math.min(1, (now - startAt) / ms);
-        window.scrollTo(0, from + dist * easeOutCubic(p));
-        if (p < 1) requestAnimationFrame(frame);
-      }
-
-      requestAnimationFrame(frame);
-    };
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setTimeout(go, 320);
-      });
-    });
-  }
-
   // Chỉ trượt hai cánh — chưa hiện layout / chưa mở khoá cuộn
   function openPanels() {
     if (home.dataset.opening === "1") return;
@@ -1625,7 +1589,6 @@ function setupInviteEnvelope() {
     openPanels();
     await runCoverIntro();
     showLayouts();
-    autoSwipeDownToInvite();
   }
 
   if (getInviteParams().get("open") === "1") {
