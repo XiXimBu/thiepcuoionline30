@@ -12,9 +12,18 @@
   };
 
   const LONG_CHARS = 90;
-  const VISIBLE_COUNT = 3;
+  const VISIBLE_COUNT = 4;
   const SCROLL_SPEED = 0.028; // px/ms — slow continuous drift
   const GAP_PX = 7;
+  const SWIPE_START_PX = 4; // finger travel before we take over the gesture
+  const SWIPE_MAX_FLING = 1.1; // px/ms cap for the release glide
+  const FLING_DECAY = 0.9; // per ~16ms frame
+  const READ_SLOW_MS = 4500; // keep drifting, but slower, right after a swipe
+  const READ_SLOW_RATE = 0.3;
+
+  function now() {
+    return typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
+  }
 
   function escapeHtml(str) {
     return String(str)
@@ -82,6 +91,16 @@
     let rafId = 0;
     let closeTimer = 0;
     let reduceMotion = false;
+    let touchId = null;
+    let swiping = false;
+    let swipeStartY = 0;
+    let swipeLastY = 0;
+    let swipeLastTs = 0;
+    let swipeVel = 0; // px/ms, same sign as scrollY
+    let flingVel = 0;
+    let slowUntil = 0;
+    let blockTapUntil = 0;
+    let readTimer = 0;
 
     try {
       reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -199,6 +218,7 @@
         btn.dataset.bound = "1";
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
+          if (now() < blockTapUntil) return;
           const chip = btn.closest(".live-chip");
           if (!chip) return;
           const open = chip.classList.toggle("is-expanded");
@@ -212,9 +232,28 @@
       track.style.transform = `translate3d(0, ${-scrollY}px, 0)`;
     }
 
+    function canLoop() {
+      return items.length > VISIBLE_COUNT;
+    }
+
+    // The track is bottom-anchored, so at scrollY = 0 the newest note sits on
+    // the last line. This is how much already-read text is stacked above it.
+    function roomAbove() {
+      const room = track.offsetHeight - feed.clientHeight;
+      return room > 0 ? room : 0;
+    }
+
     function recycleIfNeeded() {
       const chips = track.querySelectorAll(".live-chip");
-      if (chips.length < 2) return;
+      const back = -roomAbove();
+
+      if (chips.length < 2 || !canLoop()) {
+        if (scrollY > 0) scrollY = 0;
+        if (scrollY < back) scrollY = back;
+        applyTrackTransform();
+        return;
+      }
+
       let guard = 0;
       while (guard < 8) {
         const first = track.querySelector(".live-chip");
@@ -225,6 +264,23 @@
         track.appendChild(first);
         guard += 1;
       }
+
+      // Swiped past the top of the stack: wrap around by sending the tail note
+      // back to the front, so rewinding never runs out of notes to read.
+      guard = 0;
+      while (scrollY < back && guard < 8) {
+        const list = track.querySelectorAll(".live-chip");
+        const last = list[list.length - 1];
+        const first = list[0];
+        if (!last || !first || last === first) break;
+        track.insertBefore(last, first);
+        const step = last.offsetHeight + GAP_PX;
+        if (step <= 0) break;
+        scrollY += step;
+        guard += 1;
+      }
+      if (scrollY < back) scrollY = back;
+
       applyTrackTransform();
     }
 
@@ -232,15 +288,27 @@
       if (!lastTs) lastTs = ts;
       const dt = Math.min(40, ts - lastTs);
       lastTs = ts;
+      let moved = false;
 
-      if (!reduceMotion && items.length > VISIBLE_COUNT) {
-        // Ease slightly when user expanded a long message (pause drift a bit)
-        const expanded = track.querySelector(".live-chip.is-expanded");
-        const speed = expanded ? SCROLL_SPEED * 0.25 : SCROLL_SPEED;
-        scrollY += speed * dt;
-        recycleIfNeeded();
-        applyTrackTransform();
+      if (flingVel && !swiping) {
+        scrollY += flingVel * dt;
+        flingVel *= Math.pow(FLING_DECAY, dt / 16.7);
+        if (Math.abs(flingVel) < 0.004) flingVel = 0;
+        moved = true;
       }
+
+      if (!reduceMotion && !swiping && canLoop()) {
+        // Ease slightly when user expanded a long message or just swiped,
+        // but never stop: the notes keep drifting on their own.
+        const expanded = track.querySelector(".live-chip.is-expanded");
+        let speed = SCROLL_SPEED;
+        if (expanded) speed *= 0.25;
+        else if (ts < slowUntil) speed *= READ_SLOW_RATE;
+        scrollY += speed * dt;
+        moved = true;
+      }
+
+      if (moved) recycleIfNeeded();
 
       rafId = requestAnimationFrame(tick);
     }
@@ -325,17 +393,107 @@
 
     // Enable reading long chips
     feed.style.pointerEvents = "auto";
-    track.addEventListener(
+
+    // While someone is reading, slow the drift and lift the top fade.
+    function markReading() {
+      slowUntil = now() + READ_SLOW_MS;
+      // Hand-driven scrolling stays allowed even with reduced motion on.
+      feed.classList.add("is-touched");
+      feed.classList.add("is-reading");
+      window.clearTimeout(readTimer);
+      readTimer = window.setTimeout(() => feed.classList.remove("is-reading"), READ_SLOW_MS);
+    }
+
+    feed.addEventListener(
       "wheel",
       (e) => {
         e.preventDefault();
+        flingVel = 0;
         scrollY += e.deltaY * 0.35;
-        if (scrollY < 0) scrollY = 0;
+        markReading();
         recycleIfNeeded();
-        applyTrackTransform();
       },
       { passive: false }
     );
+
+    // A long note that got expanded scrolls on its own — let it keep the touch.
+    function innerScroller(node) {
+      let el = node instanceof Element ? node : null;
+      while (el && el !== feed) {
+        if (el.classList.contains("live-chip-body") && el.scrollHeight - el.clientHeight > 2) return el;
+        el = el.parentElement;
+      }
+      return null;
+    }
+
+    function findTouch(list, id) {
+      for (let i = 0; i < list.length; i += 1) {
+        if (list[i].identifier === id) return list[i];
+      }
+      return null;
+    }
+
+    function endSwipe() {
+      if (touchId === null) return;
+      const wasSwiping = swiping;
+      touchId = null;
+      swiping = false;
+      if (wasSwiping) {
+        const fresh = now() - swipeLastTs < 140;
+        const fast = Math.abs(swipeVel) > 0.05;
+        flingVel = fresh && fast ? Math.max(-SWIPE_MAX_FLING, Math.min(SWIPE_MAX_FLING, swipeVel)) : 0;
+        blockTapUntil = now() + 320;
+        markReading();
+      }
+      swipeVel = 0;
+    }
+
+    feed.addEventListener(
+      "touchstart",
+      (e) => {
+        if (e.touches.length !== 1) {
+          endSwipe();
+          return;
+        }
+        const t = e.touches[0];
+        if (innerScroller(t.target)) return;
+        touchId = t.identifier;
+        swiping = false;
+        swipeStartY = t.clientY;
+        swipeLastY = t.clientY;
+        swipeLastTs = now();
+        swipeVel = 0;
+        flingVel = 0;
+      },
+      { passive: true }
+    );
+
+    feed.addEventListener(
+      "touchmove",
+      (e) => {
+        if (touchId === null) return;
+        const t = findTouch(e.touches, touchId);
+        if (!t) return;
+        if (!swiping && Math.abs(t.clientY - swipeStartY) < SWIPE_START_PX) return;
+        swiping = true;
+        e.preventDefault();
+
+        const ts = now();
+        const dy = t.clientY - swipeLastY;
+        const dt = Math.max(1, ts - swipeLastTs);
+        swipeLastY = t.clientY;
+        swipeLastTs = ts;
+        // Swipe down (dy > 0) rewinds towards the older notes.
+        scrollY -= dy;
+        swipeVel = -dy / dt;
+        markReading();
+        recycleIfNeeded();
+      },
+      { passive: false }
+    );
+
+    feed.addEventListener("touchend", endSwipe, { passive: true });
+    feed.addEventListener("touchcancel", endSwipe, { passive: true });
 
     placeLiveBook();
     window.addEventListener("resize", placeLiveBook);
